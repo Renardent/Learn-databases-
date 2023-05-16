@@ -79,10 +79,20 @@ CREATE TABLE products (
     id serial PRIMARY KEY,
     brand varchar(200) NOT NULL,
     model varchar(300) NOT NULL,
+    category varchar(200) NOT NULL,
+    price numeric(10,2) NOT NULL CHECK (price > 0),
+    quantity int CHECK (quantity >= 0)
+);
+
+CREATE TABLE products (
+    id serial PRIMARY KEY,
+    brand varchar(200) NOT NULL,
+    model varchar(300) NOT NULL,
     description text,
     category varchar(200) NOT NULL,
     price numeric(10,2) NOT NULL CHECK (price > 0),
     discounted_price numeric(10,2) CHECK (discounted_price <= price)
+    
 );
 
 INSERT INTO products (brand, model, category, price) VALUES 
