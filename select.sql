@@ -372,44 +372,7 @@ SELECT count(id)
 FROM users
 WHERE extract('years' from age(birthday)) BETWEEN 20 AND 40;
 
-
--------- Зіставлення (сопоставление) ---------
-
-
-SELECT * FROM a, b
-WHERE A.v = B.v;
-
-SELECT A.v AS "id",
-        A.t AS "price",
-        B.v AS "phone_id"
-FROM A,B
-WHERE A.v = B.v;
-
-SELECT * 
-FROM A JOIN B 
-ON A.v = B.v;
-
-
-
----- замовлення певного юзера
---- id = 5
-
-
-SELECT * FROM users
-JOIN orders
-ON orders.customer_id = users.id
-WHERE users.id = 5;
-
-
-
-SELECT * FROM orders WHERE customer_id = 5;
-
-SELECT u.*, o.id AS "order_id"
-FROM users AS u 
-JOIN orders AS o
-ON o.customer_id = u.id
-WHERE u.id = 5;
-
+---
 
 SELECT * 
 FROM products 
@@ -424,26 +387,6 @@ JOIN orders_to_products AS otp
 ON p.id = otp.product_id
 WHERE p.brand = 'Samsung';
 
-
-SELECT p.brand, count(*) AS "quantity"
-FROM products AS p
-JOIN orders_to_products AS otp
-ON p.id = otp.product_id
-GROUP BY p.brand
-ORDER BY "quantity" DESC
-LIMIT 3;
-
-
-
-
-
---- юзери і кількість їхніх замовлень
-
-SELECT count(*), u.* 
-FROM users AS u 
-JOIN orders AS o
-ON u.id = o.customer_id
-GROUP BY u.id;
 
 ----- Юзери, які нічого не замовляли
 
