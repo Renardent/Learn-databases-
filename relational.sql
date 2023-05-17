@@ -150,6 +150,15 @@ FROM a
 JOIN b ON a.v = b.v
 JOIN products ON a.t = products.id;
 
+/* Ті, хто купив тільки самсунг*/
+
+
+SELECT count(*) 
+FROM products AS p
+JOIN orders_to_products AS otp
+ON p.id = otp.product_id
+WHERE p.brand = 'Samsung';
+
 /* зробити топ-5 товарів*/
 
 SELECT p.brand, count(*) AS "quantity"
@@ -171,6 +180,121 @@ GROUP BY u.id;
 
 /* юзери які нічого не замовляли*/
 
+SELECT *
+FROM users AS u
+LEFT JOIN orders AS o
+ON u.id = o.customer_id
+WHERE o.customer_id IS NULL;
+
+---Приклад з ексептом
 
 
+SELECT * 
+FROM users
+WHERE id IN (
+    SELECT id 
+    FROM users 
+    EXCEPT 
+    SELECT customer_id 
+    FROM orders);
+
+
+--------------- JOINS -------------
+
+--- INNER JOIN - внутрішнє співставлення
+SELECT *
+FROM users AS u 
+INNER JOIN orders AS o
+ON u.id = o.customer_id;
+
+
+
+--- LEFT JOIN
+SELECT * 
+FROM users AS u
+LEFT JOIN orders AS O
+ON u.id = o.customer_id
+ORDER BY u.id DESC;
+
+
+-------
+SELECT * 
+FROM A 
+LEFT JOIN b
+ON a.v = b.v;
+
+SELECT * 
+FROM a
+RIGHT JOIN b
+ON a.v = b.v;
+
+
+SELECT *
+FROM A
+FULL OUTER JOIN b
+ON a.v = b.v;
+
+---------Новий продукт
+
+
+INSERT INTO products (
+    brand,
+    model,
+    category,
+    price,
+    quantity
+  )
+VALUES (
+   'LG',
+   '10',
+   'phones',
+   200,
+   2
+  );
+
+
+  --- Телефон, який ніколи не купували
+
+  SELECT *
+  FROM products AS p
+  LEFT JOIN orders_to_products AS otp
+  ON p.id = otp.product_id
+  WHERE otp.product_id IS NULL;
+
+/*
+
+1. Повна вартість кожного замовлення.
+
+2. Кількість позицій в кожному замовленні.
+
+3. Знайти найпопулярніший товар.
+
+
+*/
+
+--1
+
+SELECT otp.order_id, sum(p.price*otp.quantity) AS pp
+FROM orders_to_products AS otp
+JOIN products AS p
+ON otp.product_id = p.id
+GROUP BY otp.order_id
+ORDER BY pp DESC;
+
+--2
+
+SELECT order_id, count(*)
+FROM orders_to_products
+GROUP BY order_id;
+
+
+--3
+
+SELECT p.brand, p.model, p.id, sum(otp.quantity)
+FROM products AS p
+JOIN orders_to_products AS otp
+ON p.id = otp.product_id
+GROUP BY p.id
+ORDER BY sum(otp.quantity)
+LIMIT 1;
 
