@@ -298,3 +298,110 @@ GROUP BY p.id
 ORDER BY sum(otp.quantity)
 LIMIT 1;
 
+
+----Видалити телефон, який не замовляли
+
+DELETE FROM products
+WHERE products.id IN (
+    SELECT id FROM products AS p
+    LEFT JOIN orders_to_products AS otp
+    ON p.id = otp.product_id
+    WHERE otp.product_id IS NULL
+) RETURNING *;
+
+/*
+
+1. Порахувати середній чек по всьому магазину.
+
+2. Витягти всі замовлення вище середнього чека
+
+3. Витягти всіх користувачів, в яких кількість замовлень вище середнього
+
+4. Витягти користувачів та кількість телефонів, які вони замовляли (кількість замовлень * quantity)
+
+*/
+
+--1
+
+SELECT avg(p.price*otp.quantity) AS pp
+FROM orders_to_products AS otp
+JOIN products AS p
+ON otp.product_id = p.id;
+
+---1v2
+
+SELECT avg(owc.cost)
+FROM (
+  SELECT otp.order_id, sum(p.price * otp.quantity) AS cost
+  FROM orders_to_products AS otp
+  JOIN products AS p
+  ON otp.product_id = p.id
+  GROUP BY otp.order_id
+  ) AS owc;
+
+--2
+
+SELECT owc.* 
+FROM (
+  SELECT otp.order_id, sum(p.price * otp.quantity) AS cost
+  FROM orders_to_products AS otp
+  JOIN products AS p
+  ON otp.product_id = p.id
+  GROUP BY otp.order_id
+  ) AS owc
+  WHERE owc.cost > (
+    SELECT avg(owc.cost)
+  FROM (
+  SELECT otp.order_id, sum(p.price * otp.quantity) AS cost
+  FROM orders_to_products AS otp
+  JOIN products AS p
+  ON otp.product_id = p.id
+  GROUP BY otp.order_id
+  ));
+
+---2v2
+
+/* 
+
+WITH ..alias.. AS table
+SELECT ....
+
+  */
+
+  WITH orders_with_cost AS (
+  SELECT otp.order_id, sum(p.price * otp.quantity) AS cost
+  FROM orders_to_products AS otp
+  JOIN products AS p
+  ON otp.product_id = p.id
+  GROUP BY otp.order_id
+  ) 
+  SELECT orders_with_cost.* 
+  FROM orders_with_cost
+  WHERE orders_with_cost.cost > (
+    SELECT avg(orders_with_cost.cost)
+    FROM orders_with_cost
+  );
+
+--3
+
+  WITH orders_with_cost AS (
+  SELECT customer_id, count(*) AS c
+  FROM orders 
+  GROUP BY customer_id
+  ) 
+  SELECT * 
+  FROM orders_with_cost
+  JOIN users 
+  ON users.id = orders_with_cost.customer_id
+  WHERE orders_with_cost.c > (
+    SELECT avg(orders_with_cost.c)
+    FROM orders_with_cost
+  );
+
+--4
+
+SELECT u.first_name, u.last_name, sum(quantity)
+FROM orders_to_products AS otp
+JOIN orders AS o ON o.id = otp.order_id
+JOIN users AS u ON u.id = o.customer_id
+GROUP BY u.id;
