@@ -1,46 +1,5 @@
 
 
-DROP TABLE employees;
-
-DROP TABLE positions;
-
-
-CREATE TABLE employees (
-    id serial PRIMARY KEY,
-    name varchar(200),
-    department varchar(200),
-    department_phone varchar(15)
-);
-
-INSERT INTO employees (name, department, department_phone) VALUES
-('John Doe', 'HR', '23-12-15'),
-('Jane Doe', 'Sales', '23-45-13'),
-('Carl Moe', 'Developer', '45-67-89');
-
-INSERT INTO employees (name, department, department_phone) VALUES
-('Alex Kroe', 'Developer', '45-67-89');
-
-
-CREATE TABLE departments (
-    name varchar(200) PRIMARY KEY,
-    phone_number varchar(15)
-);
-
-INSERT INTO departments VALUES 
-('HR', '23-12-15'),
-('Sales', '23-45-13'),
-('Developer', '45-67-89');
-
-
-ALTER TABLE employees
-DROP COLUMN department_phone;
-
-
-ALTER TABLE employees 
-ADD FOREIGN KEY (department)
-REFERENCES departments(name);
-
-
 ----------
 
 
