@@ -140,5 +140,46 @@ INSERT INTO students_to_teachers VALUES
 (2,1),
 (2,2);
 
+------4NF------
+------Pizza Delivery------
+/*
+Ресторани роблять піци
+Служби доставки розвозять піци
+Ресторанів багато, ресторан зв'язаний зі службами доставки, які працюють в конкретних районах.
+Служби доставки можуть працювати одночасно по декількох районах
 
-----
+*/
+
+CREATE TABLE restaurants (
+    id serial PRIMARY KEY
+);
+
+CREATE TABLE delivery_services(
+    id serial PRIMARY KEY
+);
+
+INSERT INTO restaurants_to_deliveries VALUES 
+(1,1, 'pepperoni'),
+(1,1, '4chease'),
+(1,2, 'hawaii'),
+(1,2, 'chief'),
+(1,1, 'sea');   ----- проблема, дуже багато даних тільки для одного ресторану
+
+CREATE TABLE pizzas(
+    name varchar(200) PRIMARY KEY
+);
+
+-----ще дві созалежні таблиці, піца залежить від ресторанів, де її роблять
+-----прибираємо багатозначні залежності що приводять до аномалій
+
+CREATE TABLE pizzas_to_restaurants(
+    pizza_type varchar(200) REFERENCES pizzas(name),
+    restaurant_id int REFERENCES restaurants(id),
+    PRIMARY KEY (pizza_type, restaurant_id)
+);
+
+CREATE TABLE restaurants_to_deliveries (
+    restaurant_id int REFERENCES restaurants(id),
+    delivery_id int REFERENCES delivery_services(id),
+    PRIMARY KEY (restaurant_id, delivery_id)
+);
