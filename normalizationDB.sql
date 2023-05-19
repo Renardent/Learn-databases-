@@ -87,3 +87,58 @@ INSERT INTO employees (name, department) VALUES
 
 
 ----BCNF------
+
+CREATE TABLE students(
+    id serial PRIMARY KEY,
+    name varchar(30));
+
+INSERT INTO students(name) VALUES 
+('Alex Kris'),
+('Bruno Mars Kris'),
+('Alexsis Kroe');
+
+----Викладач може вести лише один предмет
+CREATE TABLE teachers(
+    id serial PRIMARY KEY,
+    name varchar(20),
+    subject varchar(300) REFERENCES subjects(name)  ------<----
+    ---посилаємось на сабжект
+);
+
+INSERT INTO teachers(name, subject) VALUES
+('Moriarty William','math'),
+('Doctor Who', 'biology'),
+('Binarius Level','phisics');
+
+CREATE TABLE students_to_teachers(
+    teacher_id int REFERENCES teachers(id),
+    student_id int REFERENCES students(id),
+    PRIMARY KEY (teacher_id, student_id)
+);
+
+INSERT INTO students_to_teachers VALUES
+(1,1, 'biology'),
+(1,2, 'biology'),
+(2,1, 'math'),
+(2,2, 'phisics'); ----- problem! Викладач не викладає 2 предмети
+
+---Створюємо ще одну таблицю
+
+CREATE TABLE subjects (
+    name varchar(300) PRIMARY KEY
+);
+
+INSERT INTO subjects(name) VALUES
+('biology'),
+('math'),
+('phisics');
+
+------- Result with data
+INSERT INTO students_to_teachers VALUES
+(1,1),
+(1,2),
+(2,1),
+(2,2);
+
+
+----
