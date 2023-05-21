@@ -105,3 +105,74 @@ SELECT *, (
 )
 FROM users
 ORDER BY extract(year from age(birthday));
+
+/*
+Вивести всі телефони (з таблиці products), 
+якщо ціна більше 6тис - флагман
+якщо ціна від 2 до 6 - середній клас
+якщо ціна <2 тис - бюджетний
+
+*/
+
+SELECT *, (
+    CASE
+    WHEN price < 2000
+    THEN 'бюджетний'
+    WHEN price BETWEEN 2000 AND 6000 THEN 'Середній клас'
+    WHEN price >= 6000 THEN 'флагман'
+    ELSE 'невідомо'
+    END
+    ) AS "категорії"
+FROM products;
+
+
+/*
+Вивести користувачів з інформацією про їхні замовлення у вигляді:
+- якщо більше >=3 - постійний клієнт
+- якщо від 1 до 2 - активний клієнт
+- якщо 0 замовлень - новий клієнт
+
+*/
+
+SELECT u.id,u.email, (
+    CASE WHEN count(o.id) >= 3
+    THEN 'постійний клієнт'
+    WHEN count (o.id) BETWEEN 1 AND 2 
+    THEN 'активний клієнт'
+    WHEN count(o.id) = 0 
+    THEN 'новий клієнт'
+    ELSE 'невідомо'
+    END
+    )
+FROM users AS u
+JOIN orders AS o
+ON u.id = o.customer_id
+GROUP BY  u.id,u.email
+ORDER BY count(o.id);
+
+
+INSERT INTO users (
+    first_name,
+    last_name,
+    email,
+    gender,
+    is_subscribe,
+    birthday
+) VALUES
+('Big', 'Tox', 'totomail@com', 'male', true, '2000-08-09');
+
+
+----COALESCE
+
+SELECT COALESCE(NULL, 12, 24) --- 12
+COALESCE(NULL, NULL, NULL) --- NULL
+
+/* Опис телефонів - якщо опису немає, вивести "Про цей товар нічого не відомо"  */
+
+---додамо опис до декого
+UPDATE products
+SET description = 'Супер телефон з довгим описом'
+WHERE id BETWEEN 324 AND 350;
+
+SELECT id, brand,  model, price, COALESCE(description, 'Про цей товар нічого не відомо')
+FROM products;
