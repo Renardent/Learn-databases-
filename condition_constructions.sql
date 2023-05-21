@@ -176,3 +176,31 @@ WHERE id BETWEEN 324 AND 350;
 
 SELECT id, brand,  model, price, COALESCE(description, 'Про цей товар нічого не відомо')
 FROM products;
+
+-------------NULLIF
+
+NULLIF(NULL, NULL) --- NULL
+NULLIF(12, 12) - NULL
+NULLIF(12, NULL) - 12
+NULLIF(NULL, 12) - NULL
+
+
+--- Не можемо порівнювати рядок і число
+
+SELECT model, price, NULLIF(category, 'phones')
+FROM products;
+
+ -------GREATEST, LEAST
+
+--GREATEST - найбільше зі списку аргументів
+--LEAST - найменше зі списку аргументів
+
+SELECT id, brand, model, LEAST(price, discounted_price)
+FROM products;
+
+
+INSERT INTO products
+(brand, model, category, price, discounted_price, quantity)
+VALUES
+('Iphone', '2000', 'smartphones', 10000, 8000, 1);
+
