@@ -204,3 +204,48 @@ INSERT INTO products
 VALUES
 ('Iphone', '2000', 'smartphones', 10000, 8000, 1);
 
+------Підзапити----
+
+---IN, NOT IN, SOME, ANY, EXISTS
+
+
+/* Знайти всіх користувачів, які не робили замовлень */
+
+SELECT * FROM users AS u
+WHERE u.id NOT IN (SELECT customer_id FROM orders);
+
+----Телефони, яких ніхто не замовляв
+
+SELECT * FROM products AS p
+WHERE p.id NOT IN (SELECT product_id FROM orders_to_products);
+
+
+----EXISTS---
+
+SELECT EXISTS (SELECT * 
+        FROM users AS u
+        WHERE u.id = 23 );
+
+
+SELECT EXISTS (SELECT * FROM orders AS o
+                WHERE o.customer_id = 2542);
+
+SELECT * FROM orders AS o
+WHERE o.customer_id = 2542;
+
+
+------ANY/SOME---
+
+--ANY - IN
+
+SELECT * FROM users AS u
+WHERE u.id = ANY (SELECT customer_id FROM orders);
+
+SELECT * FROM users AS u
+WHERE u.id = SOME (SELECT customer_id FROM orders);
+
+
+SELECT * FROM products AS p
+WHERE p.id != ALL 
+    (SELECT product_id FROM orders_to_products);
+
