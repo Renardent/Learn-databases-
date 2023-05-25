@@ -1,5 +1,3 @@
-
-
 -----------------
 
 /*  ENUM   */
@@ -10,17 +8,20 @@ WHERE status = true;
 ---- order status:
 -- true - виконано
 -- false - не виконано
-
-
 --- 'processing' - 'proccessing' -- 'prosesing'
 
-
 -- ('new', 'processing', 'shiped', 'done')
+
+DROP VIEW users_with_age_and_amounts;
+DROP VIEW users_with_total_amounts;
+DROP VIEW users_with_orders_amount;
+
+DROP VIEW orders_with_price;
 
 CREATE TYPE order_status AS ENUM('new', 'processing', 'shiped', 'done');
 
 ALTER TABLE orders
-ALTER COLUMN status TYPE order_status;  ----- problem! impossible cast
+ALTER COLUMN status TYPE order_status;  ----- problem! impossible cast,неможливо змінити таблицю
 
 
 ALTER TABLE orders
@@ -33,6 +34,7 @@ USING (
     ELSE 'new'
     END
 )::order_status;
+---не вийде якщо дані використовуються views
 
 
 INSERT INTO orders (customer_id, status) VALUES
@@ -49,12 +51,9 @@ UPDATE orders
 SET status = 'shiped'
 WHERE id = 2543;
 
-
-
 ------------------
 
-
-CREATE SCHEMA newtask;
+CREATE SCHEMA tasks;
 
 
 /*
@@ -64,18 +63,18 @@ employees: salary, department, position, hire_date, name
 
 */
 
-CREATE TABLE newtask.users(
-    login varchar(200) NOT NULL CHECK (login!=''),
-    email varchar(300) NOT NULL CHECK (email!=''),
-    password varchar(300) NOT NULL CHECK (password != '')
+CREATE TABLE tasks.user (
+    login varchar(100) NOT NULL CHECK (login != ''),
+    email varchar(110) NOT NULL CHECK (email != ''),
+    password varchar(30) NOT NULL CHECK (password != '')
 );
 
-CREATE TABLE newtask.employees(
-    name varchar(200) NOT NULL CHECK (name!=''),
-    salary int NOT NULL CHECK (salary >= 0),
-    department varchar(200) NOT NULL CHECK (department!=''),
-    position varchar(200) NOT NULL CHECK (position!=''),
-    hire_date date DEFAULT current_date
+CREATE TABLE tasks.employees (
+    salary int NOT NULL CHECK (salary >=0),
+    department varchar(100) NOT NULL CHECK (department != ''),
+    position varchar(100) NOT NULL CHECK (position != ''),
+    hire_date date DEFAULT current_date,
+    name varchar(100) NOT NULL CHECK (name != '')
 );
 
 /*
@@ -86,6 +85,8 @@ CREATE TABLE newtask.employees(
 */
 
 --- Всі зміни в таблицях проводити виключно ALTER-ом.
+
+
 
 
 

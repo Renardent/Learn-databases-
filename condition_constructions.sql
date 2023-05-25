@@ -377,9 +377,3 @@ FROM users_with_total_amounts
 
 SELECT * FROM users_with_age_and_amounts
 WHERE age > 30;
-
-DROP VIEW users_with_age_and_amounts;
-DROP VIEW users_with_total_amounts;
-DROP VIEW users_with_orders_amount;
-
-DROP VIEW orders_with_price;
